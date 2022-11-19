@@ -14,7 +14,7 @@ jobs:
           # Unityプロジェクトの現バージョンを指定してください。
           - 2021.3.4f1
         testMode:
-          - playmode
+          # - playmode
           - editmode
     steps:
       # Checkout
