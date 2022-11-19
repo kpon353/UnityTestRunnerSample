@@ -25,7 +25,7 @@ public class TestedCodeSample
   /// <param name="number"></param>
   /// <param name="magnification"></param>
   /// <returns></returns>
-  public static int MultiplyAndRoundup(int number, float magnification)
+  private static int MultiplyAndRoundup(int number, float magnification)
   {
     return Mathf.CeilToInt(number * magnification);
   }
