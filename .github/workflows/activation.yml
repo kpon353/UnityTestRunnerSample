@@ -4,8 +4,6 @@ on:
 jobs:
   activation:
     name: Request manual activation file
-
-    name: Acquire activation file 🔑
     runs-on: ubuntu-latest
     steps:
       # GameCIのActivationを利用してalfファイルを発行する
