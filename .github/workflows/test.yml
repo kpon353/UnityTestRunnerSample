@@ -1,45 +1,39 @@
 name: Run EditMode and PlayMode Test
-on:
-  workflow_dispatch: {}
+on: [push]
+
 jobs:
   test:
-    name: ${{ matrix.testMode }} on ${{ matrix.unityVersion }}
+    name: Test in Unity${{ matrix.unityVersion }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        projectPath:
-          - .
         unityVersion:
-          # Unityプロジェクトの現バージョンを指定してください。
-          - 2021.3.4f1
-        testMode:
-          # - playmode
-          - editmode
+          - 2021.3.4f1 # 好きなバージョンを指定
+          # - 2022.1.0f1 # 好きなバージョンを指定
     steps:
-      # Checkout
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           lfs: true
-
-      # Cache
-      - name: Cache
-        uses: actions/cache@v2
+          path: Unity${{ matrix.unityVersion }}
+      - uses: actions/cache@v3
         with:
-          path: ${{ matrix.projectPath }}/Library
-          key: Library-${{ matrix.projectPath }}
+          path: Unity${{ matrix.unityVersion }}/Library
+          key: Library-Unity${{ matrix.unityVersion }}
           restore-keys: |
             Library-
-
-      # Tests
-      - name: Tests
-        uses: game-ci/unity-test-runner@v2.1.0
+      - uses: game-ci/unity-test-runner@v2.1.0
         id: tests
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
-          projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
-          testMode: ${{ matrix.testMode }}
+          projectPath: Unity${{ matrix.unityVersion }}
+          artifactsPath: Unity${{ matrix.unityVersion }}-artifacts
           githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: Unity${{ matrix.unityVersion }} Test Results
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: Test results for Unity${{ matrix.unityVersion }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
