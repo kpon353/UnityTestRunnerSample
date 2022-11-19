@@ -1,5 +1,7 @@
 name: Run EditMode and PlayMode Test
-on: [push]
+on:
+  push:
+  workflow_dispatch: {}
 
 jobs:
   test:
