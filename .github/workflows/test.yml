@@ -1,0 +1,51 @@
+name: Run EditMode and PlayMode Test
+on:
+  workflow_dispatch: {}
+jobs:
+  test:
+    name: Run EditMode and PlayMode Test
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v2 を利用して作業ディレクトリに
+      # Unityプロジェクトの中身をダウンロードしてくる
+      - name: Check out my unity project.
+        uses: actions/checkout@v2
+      
+      # GameCIのTestRunnerを利用して
+      # EditMode及びPlayModeのテストを実行する
+      - name: Run EditMode and PlayMode Test
+        uses: game-ci/unity-test-runner@v2
+        env:
+          # Secretsに登録したUnityライセンスの情報を指定する
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          
+          # もしProfessional licenseを使いたい場合は、
+          # メールアドレス、パスワード、シリアルナンバーを入力する必要がある
+          # ref: https://game.ci/docs/github/test-runner#professional-license
+          # UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          # UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          # UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          projectPath: .
+          # テストの実行結果も見たい場合は githubTokenを指定する
+          # secrets.GITHUB_TOKENはSecrets未登録でも利用可能
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          
+          # Unityプロジェクトのバージョンを指定する
+          # ProjectSettings/ProjectVersion.txt に記載されているバージョンを入力すれば OK
+          unityVersion: 2021.3.4f1
+          
+          # 実行したいテストの種類を指定できる
+          # 指定可能な値は All, PlayMode, EditMode
+          # testMode: ALL
+          testMode: EditMode
+          
+          # テスト実行時に利用したいDockerイメージを明示的に指定できる
+          # customImage: 'unityci/editor:2020.1.14f1-base-0'
+          
+      # テストの実行結果をアーティファクトにアップロードしてダウンロードして参照できるようにする
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Test results
+          path: artifacts
