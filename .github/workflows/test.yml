@@ -15,7 +15,7 @@ jobs:
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
-          projectPath: .
+          projectPath: UnityTestRunnerSample
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           unityVersion: 2021.3.4f1
       - name: Upload Test Results
